@@ -13,7 +13,7 @@ metadata:
     project: roboshop
     tier: database
 spec:
-  clusterIP: none # It is to sync DB's in every PODS
+  clusterIP: None # It is to sync DB's in every PODS
   selector:
     component: mongodb
     project: roboshop
@@ -43,7 +43,7 @@ spec:
     targetPort: 27017
 ---
 apiVersion: apps/v1
-kind: statefulset
+kind: StatefulSet
 metadata:
   name: mongodb
   namespace: roboshop
@@ -57,7 +57,7 @@ spec:
       component: mongodb
       project: roboshop
       tier: database # has to match .spec.template.metadata.labels
-  serviceName: mongodb-headless #this should be headless service
+  serviceName: "mongodb-headless" #this should be headless service
   replicas: 3 #By default its 1
   template:
     metadata:
