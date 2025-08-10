@@ -42,7 +42,7 @@ spec:
         image: johnson0309/catalogue:v1
         resources:
           requests:
-            cpu: "50m"                #Soft Limit and we calculate it based on storage. ex: 2Gi for each pod then we should give maximum 60m core
+            cpu: "50m"       #m stands for millicore. 1m = 1000 core #Soft Limit and we calculate it based on storage. ex: 2Gi for each pod then we should give maximum 60m core.
             memory: "128Mi"
           limits:
             cpu: "100m"
@@ -69,3 +69,25 @@ spec:
   - protocol: TCP
     port: 8080 # service port
     targetPort: 8080 # container port
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoScaler
+metadata: 
+  name: catalogue
+  namespace: roboshop
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: catalogue  # It targets the catalogue deployment
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 10 # This is avg utilization of all the PODS usage. If it exceeds more than 10% then scaling happens
+#HPA usually watches out the catalogue deployment. If the pods accross the deployment utilization more than 10% then it will create
+# new pods using HPA auto scaling
